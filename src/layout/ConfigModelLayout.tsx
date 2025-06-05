@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
 function ConfigModelLayout() {
-  const [modelConfigExpanded, setModelConfigExpanded] = useState(true)
+  const [modelConfigExpanded, setModelConfigExpanded] = useState(false)
   return (
     <div className="border rounded-lg overflow-hidden bg-white">
       <div className="p-4 border-b">

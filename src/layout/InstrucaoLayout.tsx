@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea"
 import Image from "next/image"
 
 function InstrucaoLayout() {
-    const [instructionsExpanded, setInstructionsExpanded] = useState(true)
+    const [instructionsExpanded, setInstructionsExpanded] = useState(false)
 
     return (
         <div className="border rounded-lg overflow-hidden bg-white">

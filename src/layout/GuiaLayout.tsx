@@ -7,11 +7,10 @@ function GuiaLayout() {
             <div className="flex flex-col md:flex-row gap-6 items-center">
                 <div className="flex-1">
                     <h3 className="text-[18px] font-bold text-[#373F45] mb-3">
-                        Preencha os campos do formulário para gerar o contrato
+                        O sistema de geração de contratos jurídicos mais rápido que existe!
                     </h3>
                     <p className="text-[#999999] font-semibold text-[16px]">
-                        Você pode editar as informações e gerar um novo contrato sempre que necessário. Caso precise de suporte
-                        adicional durante o processo, assista ao nosso vídeo de orientação.
+                        Faça o upload dos seus documentos, escolha o seu modelo de contrato, copie e cole ou peça para a IA criar, depois você ainda poderá assinar e exportar seus documentos, assista o nosso vídeo para aprender mais.
                     </p>
                 </div>
 

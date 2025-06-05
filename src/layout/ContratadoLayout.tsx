@@ -6,46 +6,40 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChevronUp, UserMinus, UserPlus } from "lucide-react"
 import Image from "next/image"
-import { useForm } from "react-hook-form"
-import { pessoaFisicaValidations, pessoaJuridicaValidation, advogadoValidations } from "@/validations/ContratoValidation"
+import { useForm } from "react-hook-form";
+import { formatCPF, isValidCPF, formatDate, formatCep, isValidCep, formatCnpj, isValidCnpj } from "@/lib/validations"
 
-type FormData = {
-    parties: Array<{
-        type: "pessoa-fisica" | "pessoa-juridica"
-        cpf?: string
+interface FormData {
+    cpf?: string
+    nome?: string
+    nascimento?: string
+    estadoCivil?: string
+    profissao?: string
+    cep?: string
+    endereco?: string
+    numero?: string
+    empresa?: string
+    cnpj?: string
+    representante?: string
+    advogado?: {
+        oab?: string
         nome?: string
-        nascimento?: string
-        estadoCivil?: string
-        profissao?: string
-        cep?: string
-        endereco?: string
-        numero?: string
-        empresa?: string
-        cnpj?: string
-        representante?: string
-        advogado?: {
-            oab?: string
-            nome?: string
-        }
-    }>
+    }
 }
-
-function ContratoLayout() {
-    const [contractDataExpanded, setContractDataExpanded] = useState(true)
-    const [parties, setParties] = useState([1, 2])
-    const [lawyerInfo, setLawyerInfo] = useState([false, false])
+function ContratadoLayout() {
+    const [contractDataExpanded, setContractDataExpanded] = useState(false)
+    const [parties, setParties] = useState([1])
+    const [lawyerInfo, setLawyerInfo] = useState([false])
 
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
-        watch,
-        setValue
-    } = useForm<FormData>({
-        defaultValues: {
-            parties: parties.map(() => ({ type: "pessoa-fisica" }))
-        }
-    })
+    } = useForm<FormData>()
+    const onSubmit = (data: FormData) => {
+        console.log("Dados enviados:", data);
+    };
 
     const toggleLawyerInfo = (index: number) => {
         const newLawyerInfo = [...lawyerInfo]
@@ -120,7 +114,7 @@ function ContratoLayout() {
                                         </TabsTrigger>
                                     </TabsList>
 
-                                    {/*CComeço Pessoa Fisica*/}
+                                    {/*Começo Pessoa Fisica*/}
                                     <TabsContent value="pessoa-fisica" className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
                                             <div className="flex flex-col items-center justify-center p-8 border rounded-lg bg-gray-50">
@@ -162,12 +156,17 @@ function ContratoLayout() {
                                                         <Input
                                                             id={`cpf-${index}`}
                                                             placeholder="000.000.000-00"
+                                                            inputMode="numeric"
                                                             className="bg-gray-100 border-gray-200"
-                                                            {...register(`parties.${index}.cpf`, pessoaFisicaValidations.cpf)}
+                                                            {...register("cpf", {
+                                                                required: "Campo Obrigatório",
+                                                                validate: (value) => isValidCPF(value ?? "") || "CPF inválido",
+                                                            })}
+                                                            onChange={(e) => {
+                                                                const formatted = formatCPF(e.target.value);
+                                                                setValue("cpf", formatted);
+                                                            }}
                                                         />
-                                                        {errors.parties?.[index]?.cpf && (
-                                                            <p className="text-red-500 text-sm mt-1">{errors.parties[index]?.cpf?.message}</p>
-                                                        )}
                                                     </div>
 
                                                     <div>
@@ -176,7 +175,16 @@ function ContratoLayout() {
                                                             <Input
                                                                 id={`nascimento-${index}`}
                                                                 placeholder="dd/mm/yyyy"
+                                                                inputMode="numeric"
                                                                 className="bg-gray-100 border-gray-200 pr-10"
+                                                                {...register("nascimento", {
+                                                                    required: "Campo Obrigatório",
+                                                                    validate: (value) => (value?.length === 10) || "Data incompleta",
+                                                                })}
+                                                                onChange={(e) => {
+                                                                    const formatted = formatDate(e.target.value);
+                                                                    setValue("nascimento", formatted);
+                                                                }}
                                                             />
                                                             <Button variant="ghost" size="icon" className="absolute right-0 top-0 h-full">
                                                                 <Image
@@ -196,6 +204,7 @@ function ContratoLayout() {
                                                         id={`nome-${index}`}
                                                         placeholder="Insira o nome"
                                                         className="bg-gray-100 border-gray-200"
+                                                        {...register("nome", { required: "Campo Obrigatório" })}
                                                     />
                                                 </div>
 
@@ -206,8 +215,9 @@ function ContratoLayout() {
                                                             <select
                                                                 id={`estado-civil-${index}`}
                                                                 className="w-full h-10 px-3 py-2 bg-gray-100 border border-gray-200 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                {...register("estadoCivil", { required: "Campo Obrigatório", validate: (value) => value !== "0" || "Selecione uma opção válida" })}
                                                             >
-                                                                <option value="" disabled selected>
+                                                                <option value="0">
                                                                     Selecione uma opção
                                                                 </option>
                                                                 <option value="solteiro">Solteiro(a)</option>
@@ -240,6 +250,7 @@ function ContratoLayout() {
                                                             id={`profissao-${index}`}
                                                             placeholder="Insira o nome"
                                                             className="bg-gray-100 border-gray-200"
+                                                            {...register("profissao", { required: "Campo Obrigatório" })}
                                                         />
                                                     </div>
                                                 </div>
@@ -256,7 +267,14 @@ function ContratoLayout() {
                                                             <Input
                                                                 id={`cep-pf-${index}`}
                                                                 placeholder="Pesquise pelo CEP"
+                                                                inputMode="numeric"
                                                                 className="bg-gray-100 border-gray-200 pr-10"
+                                                                {...register("cep", { required: "Campo Obrigatório", validate: (value) => isValidCep(value ?? "") || "CEP inválido" })}
+
+                                                                onChange={(e) => {
+                                                                    const formatted = formatCep(e.target.value);
+                                                                    setValue("cep", formatted);
+                                                                }}
                                                             />
                                                             <Button variant="ghost" size="icon" className="absolute right-0 top-0 h-full">
                                                                 <Image
@@ -275,7 +293,9 @@ function ContratoLayout() {
                                                         <Input
                                                             id={`numero-pf-${index}`}
                                                             placeholder="Insira o número"
+                                                            inputMode="numeric"
                                                             className="bg-gray-100 border-gray-200"
+                                                            {...register("numero", { required: "Campo Obrigatório" })}
                                                         />
                                                     </div>
                                                 </div>
@@ -286,6 +306,7 @@ function ContratoLayout() {
                                                         id={`endereco-pf-${index}`}
                                                         placeholder="Insira o endereço da empresa"
                                                         className="bg-gray-100 border-gray-200"
+                                                        {...register("endereco", { required: "Campo Obrigatório" })}
                                                     />
                                                 </div>
                                             </div>
@@ -319,6 +340,7 @@ function ContratoLayout() {
                                                         id={`empresa-${index}`}
                                                         placeholder="Insira o nome da empresa"
                                                         className="bg-gray-100 border-gray-200"
+                                                        {...register("empresa", { required: "Campo Obrigatório" })}
                                                     />
                                                 </div>
 
@@ -326,8 +348,15 @@ function ContratoLayout() {
                                                     <Label htmlFor={`cnpj-${index}`}>CNPJ</Label>
                                                     <Input
                                                         id={`cnpj-${index}`}
+                                                        inputMode="numeric"
                                                         placeholder="Insira o CNPJ da empresa"
                                                         className="bg-gray-100 border-gray-200"
+                                                        {...register("cnpj", { required: "Campo Obrigatório", validate: (value) => isValidCnpj(value ?? "") || "CNPJ inválido", })}
+
+                                                        onChange={(e) => {
+                                                            const formatted = formatCnpj(e.target.value);
+                                                            setValue("cnpj", formatted);
+                                                        }}
                                                     />
                                                 </div>
 
@@ -337,6 +366,7 @@ function ContratoLayout() {
                                                         id={`representante-${index}`}
                                                         placeholder="Insira o representante da empresa"
                                                         className="bg-gray-100 border-gray-200"
+                                                        {...register("representante", { required: "Campo Obrigatório" })}
                                                     />
                                                 </div>
 
@@ -351,7 +381,14 @@ function ContratoLayout() {
                                                                 <Input
                                                                     id={`cep-${index}`}
                                                                     placeholder="Pesquise pelo CEP"
+                                                                    inputMode="numeric"
                                                                     className="bg-gray-100 border-gray-200 pr-10"
+                                                                    {...register("cep", { required: "Campo Obrigatório", validate: (value) => isValidCep(value ?? "") || "CEP inválido" })}
+
+                                                                    onChange={(e) => {
+                                                                        const formatted = formatCep(e.target.value);
+                                                                        setValue("cep", formatted);
+                                                                    }}
                                                                 />
                                                                 <Button variant="ghost" size="icon" className="absolute right-0 top-0 h-full">
                                                                     <Image
@@ -370,7 +407,9 @@ function ContratoLayout() {
                                                             <Input
                                                                 id={`numero-${index}`}
                                                                 placeholder="Insira o número"
+                                                                inputMode="numeric"
                                                                 className="bg-gray-100 border-gray-200"
+                                                                {...register("numero", { required: "Campo Obrigatório" })}
                                                             />
                                                         </div>
                                                     </div>
@@ -382,6 +421,7 @@ function ContratoLayout() {
                                                         id={`endereco-${index}`}
                                                         placeholder="Insira o endereço da empresa"
                                                         className="bg-gray-100 border-gray-200"
+                                                        {...register("endereco", { required: "Campo Obrigatório" })}
                                                     />
                                                 </div>
                                             </div>
@@ -459,4 +499,4 @@ function ContratoLayout() {
         </div>
     )
 }
-export default ContratoLayout
+export default ContratadoLayout
