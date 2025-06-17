@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form"
 import { formatCPF, isValidCPF, formatDate, formatCep, isValidCep, formatCnpj, isValidCnpj } from "@/lib/validations"
 
 interface FormData {
+    email?: string
     cpf?: string
     nome?: string
     nascimento?: string
@@ -55,7 +56,7 @@ function ContratanteLayout() {
             >
                 <div className="flex items-center gap-2">
                     <Image
-                        src="/document_icon.svg"
+                        src="/enterprise_icon.svg"
                         alt="Icon Upload"
                         width={25}
                         height={15}
@@ -120,6 +121,16 @@ function ContratanteLayout() {
                                         <h3 className="font-semibold text-[#999999] mb-4">Dados pessoais</h3>
 
                                         <div className="space-y-4">
+                                            <div>
+                                                <Label htmlFor="email">E-mail</Label>
+                                                <Input
+                                                    id="email"
+                                                    placeholder="Insira o e-mail"
+                                                    className="bg-gray-100 border-gray-200"
+                                                    {...register("email", { required: "Campo Obrigatório" })}
+                                                    type="email"
+                                                />
+                                            </div>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
                                                     <Label htmlFor="cpf">CPF</Label>
@@ -308,6 +319,17 @@ function ContratanteLayout() {
 
                                         <div className="space-y-4">
                                             <div>
+                                                <Label htmlFor="email">E-mail</Label>
+                                                <Input
+                                                    id="email"
+                                                    placeholder="Insira o e-mail"
+                                                    className="bg-gray-100 border-gray-200"
+                                                    {...register("email", { required: "Campo Obrigatório" })}
+                                                    type="email"
+                                                />
+                                            </div>
+
+                                            <div>
                                                 <Label htmlFor="empresa">Empresa</Label>
                                                 <Input
                                                     id="empresa"
@@ -414,23 +436,22 @@ function ContratanteLayout() {
                                     />
                                     <Label htmlFor="lawyer-switch">Informar advogado?</Label>
                                 </div>
+                                <div className="bg-[#CBEEFE] border border-[#0057B0] rounded-lg p-4 mb-4 flex gap-3">
+                                    <Image
+                                        src="/info_icon.svg"
+                                        alt="Icon de informação"
+                                        width={24}
+                                        height={24}
+                                        className="mb-5"
+                                    />
+                                    <div className="text-sm text-[#373F45]">
+                                        <p className="font-semibold">O preenchimento do advogado não é obrigatório</p>
+                                        <p>Cada parte pode ter seu advogado independente, não sendo necessário seu preenchimento</p>
+                                    </div>
+                                </div>
 
                                 {hasLawyer && (
                                     <>
-                                        <div className="bg-[#CBEEFE] border border-[#0057B0] rounded-lg p-4 mb-4 flex gap-3">
-                                            <Image
-                                                src="/info_icon.svg"
-                                                alt="Icon de informação"
-                                                width={24}
-                                                height={24}
-                                                className="mb-5"
-                                            />
-                                            <div className="text-sm text-[#373F45]">
-                                                <p className="font-semibold">O preenchimento do advogado não é obrigatório</p>
-                                                <p>Cada parte pode ter seu advogado independente, não sendo necessário seu preenchimento</p>
-                                            </div>
-                                        </div>
-
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <Label htmlFor="oab">Número OAB</Label>
@@ -439,7 +460,6 @@ function ContratanteLayout() {
                                                         id="oab"
                                                         placeholder="Pesquise pelo número da OAB"
                                                         className="bg-gray-100 border-gray-200 pr-10"
-                                                        {...register("advogado.oab")}
                                                     />
                                                     <Button variant="ghost" size="icon" className="absolute right-0 top-0 h-full">
                                                         <Image
@@ -452,18 +472,39 @@ function ContratanteLayout() {
                                                 </div>
                                             </div>
                                             <div>
-                                                <Label htmlFor="advogado-nome">Nome do Advogado</Label>
+                                                <Label htmlFor="advogado">Nome do Advogado</Label>
                                                 <Input
-                                                    id="advogado-nome"
+                                                    id="advogado"
                                                     placeholder="Insira o nome do advogado"
                                                     className="bg-gray-100 border-gray-200"
-                                                    {...register("advogado.nome")}
                                                 />
                                             </div>
                                         </div>
                                     </>
                                 )}
-                                <Button onClick={() => handleSubmit(onSubmit)}>teste</Button>
+                            </div>
+                            <div className="mt-6">
+                                <h3 className="font-semibold text-[#999999] mb-4">LGPD - Lei geral de Proteção de Dados</h3>
+
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Switch
+                                    />
+                                    <Label htmlFor={`lawyer-switch`}>Estou de Acordo com as regras da LGPD</Label>
+                                </div>
+
+                                <div className="bg-[#CBEEFE] border border-[#0057B0] rounded-lg p-4 mb-4 flex gap-3">
+                                    <Image
+                                        src="/info_icon.svg"
+                                        alt="Icon de informação"
+                                        width={24}
+                                        height={24}
+                                        className="mb-5"
+                                    />
+                                    <div className="text-sm text-[#373F45]">
+                                        <p className="font-semibold">Ao enviar os dados para nossos sistema você concorda que tem autorização</p>
+                                        <p className="font-semibold">Dos proprietários dos documentos para realizar o tratamento de dados</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

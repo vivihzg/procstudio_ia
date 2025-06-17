@@ -4,6 +4,7 @@ import ContratadoLayout from "@/layout/ContratadoLayout"
 import ContratanteLayout from "@/layout/ContratanteLayout"
 import ConfigModelLayout from "@/layout/ConfigModelLayout"
 import InstrucaoLayout from "@/layout/InstrucaoLayout"
+import ConfigIALayout from "@/layout/ConfigIALayout"
 import GuiaLayout from "@/layout/GuiaLayout"
 import FooterContratLayout from "@/layout/FooterContratLayout"
 export default function Page() {
@@ -15,6 +16,7 @@ export default function Page() {
           <ContratadoLayout />
           <ContratanteLayout />
           <ConfigModelLayout />
+          <ConfigIALayout />
           <InstrucaoLayout />
           <FooterContratLayout/>
         </div>
